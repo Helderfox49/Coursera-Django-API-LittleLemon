@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Chocolate Cake",
+        "price": "2.50",
+        "inventory": 100
+    },
+    {
+        "id": 2,
+        "title": "Vanilla Ice Cream",
+        "price": "1.50",
+        "inventory": 100
+    },
+    {
+        "id": 3,
+        "title": "Strawberry Ice Cream",
+        "price": "1.50",
+        "inventory": 100
+    }
+]
