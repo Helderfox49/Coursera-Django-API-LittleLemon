@@ -15,7 +15,8 @@ class MenuItem(models.Model):
         Category, 
         on_delete=models.PROTECT, 
         related_name='menu_items',
-        default=1)
+        default=1
+    )
 
     def __str__(self):
-        return self.name
+        return self.title
