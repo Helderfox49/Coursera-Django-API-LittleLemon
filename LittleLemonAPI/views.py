@@ -1,13 +1,17 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
 from .models import MenuItem
 from .serializers import MenuItemSerializer
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage
 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 
 from rest_framework import viewsets
+
+from .throttles import TenCallsPerMinute
 
 class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
@@ -55,6 +59,38 @@ def single_item(request, id):
     serializer_item = MenuItemSerializer(item)
     return Response(serializer_item.data)
 
+@api_view()
+@permission_classes([IsAuthenticated])
+def secret(request):
+    return Response({"message":"Some secret message"})
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def me(request):
+    return Response(request.user.email)
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def manager_view(request):
+    if request.user.groups.filter(name="Manager").exists():
+        return Response({"message": "only manager can see this"})
+    else:
+        return Response({"message": "You are not authorized"}, 403)
+
+
+@api_view()
+@throttle_classes([AnonRateThrottle])
+def throttle_check(request):
+    return Response({"message": "Succesful"})
+
+
+@api_view()
+@throttle_classes([TenCallsPerMinute])
+@permission_classes([IsAuthenticated])
+def throttle_check_auth(request):
+    return Response({"message": "Message for the logged in users only"})
 
 # class MenuItemsView(generics.ListCreateAPIView):
 #     queryset = MenuItem.objects.all()
